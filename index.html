@@ -1,33 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="az">
 <head>
     <meta charset="UTF-8">
-    <title>AI Video Generator</title>
+    <title>Məktəb Gündəliyim</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .box {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        img {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+        .task {
+            background: #eee;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 
-<h1>AI Video Generator 🚀</h1>
+<h1>📘 Məktəb Gündəliyim</h1>
 
-<textarea id="idea" rows="6" cols="60" placeholder="İdeanı yaz..."></textarea>
-<br><br>
+<div class="box">
+    <h3>📸 Dərs cədvəlini yüklə</h3>
+    <input type="file" accept="image/*" onchange="loadImage(event)">
+    <img id="scheduleImage">
+</div>
 
-<button onclick="generate()">Generate</button>
+<div class="box">
+    <h3>✍️ Yeni tapşırıq əlavə et</h3>
+    <input id="subject" placeholder="Fənn (məs: Riyaziyyat)">
+    <textarea id="task" placeholder="Tapşırıq"></textarea>
+    <button onclick="addTask()">Əlavə et</button>
+</div>
 
-<p id="result"></p>
+<div class="box">
+    <h3>📚 Tapşırıqlarım</h3>
+    <div id="taskList"></div>
+</div>
 
 <script>
-function generate() {
-    const idea = document.getElementById("idea").value;
-
-    if (idea.trim() === "") {
-        alert("Zəhmət olmasa ideya yaz 🙂");
-        return;
+    // Şəkil yükləmə
+    function loadImage(event) {
+        const img = document.getElementById("scheduleImage");
+        img.src = URL.createObjectURL(event.target.files[0]);
+        localStorage.setItem("scheduleImage", img.src);
     }
 
-    document.getElementById("result").innerText =
-        "✅ İdeya qəbul edildi. AI hazırda mətni yaradır...";
-}
+    // Şəkli saxla
+    if (localStorage.getItem("scheduleImage")) {
+        document.getElementById("scheduleImage").src =
+            localStorage.getItem("scheduleImage");
+    }
+
+    // Tapşırıq əlavə et
+    function addTask() {
+        const subject = document.getElementById("subject").value;
+        const task = document.getElementById("task").value;
+
+        if (!subject || !task) {
+            alert("Fənn və tapşırıq yaz!");
+            return;
+        }
+
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.push({ subject, task });
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+
+        document.getElementById("subject").value = "";
+        document.getElementById("task").value = "";
+
+        showTasks();
+    }
+
+    // Tapşırıqları göstər
+    function showTasks() {
+        const taskList = document.getElementById("taskList");
+        taskList.innerHTML = "";
+
+        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        tasks.forEach(t => {
+            const div = document.createElement("div");
+            div.className = "task";
+            div.innerHTML = `<b>${t.subject}</b><br>${t.task}`;
+            taskList.appendChild(div);
+        });
+    }
+
+    showTasks();
 </script>
 
 </body>
 </html>
+

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>AI Video Generator</title>
@@ -8,12 +8,26 @@
 
 <h1>AI Video Generator 🚀</h1>
 
-<p>Write your idea below:</p>
-
-<textarea rows="6" cols="60" placeholder="Write your idea here..."></textarea>
+<textarea id="idea" rows="6" cols="60" placeholder="İdeanı yaz..."></textarea>
 <br><br>
 
-<button>Generate</button>
+<button onclick="generate()">Generate</button>
+
+<p id="result"></p>
+
+<script>
+function generate() {
+    const idea = document.getElementById("idea").value;
+
+    if (idea.trim() === "") {
+        alert("Zəhmət olmasa ideya yaz 🙂");
+        return;
+    }
+
+    document.getElementById("result").innerText =
+        "✅ İdeya qəbul edildi. AI hazırda mətni yaradır...";
+}
+</script>
 
 </body>
 </html>

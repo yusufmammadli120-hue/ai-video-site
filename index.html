@@ -1,119 +1,184 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <title>Məktəb Gündəliyim</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        .box {
-            background: white;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-        input, textarea, button {
-            width: 100%;
-            margin-top: 10px;
-            padding: 8px;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        img {
-            max-width: 100%;
-            margin-top: 10px;
-        }
-        .task {
-            background: #eee;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KAZANC.COM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1b1f2a, #0b0f1a);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      background: linear-gradient(145deg, #111827, #0b0f1a);
+      border-radius: 18px;
+      padding: 40px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 50px;
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .menu {
+      font-size: 24px;
+      opacity: 0.7;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .hero h2 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      opacity: 0.75;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      padding: 28px;
+      border-radius: 16px;
+      position: relative;
+      background: linear-gradient(145deg, #1a1f2e, #0e1220);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card span {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .card h3 {
+      margin-top: 40px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .card p {
+      margin-top: 8px;
+      font-size: 14px;
+      opacity: 0.75;
+    }
+
+    .cpm { border-top: 3px solid #8b5cf6; }
+    .cpc { border-top: 3px solid #3b82f6; }
+    .affiliate { border-top: 3px solid #10b981; }
+
+    .checks {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .checks p {
+      margin: 8px 0;
+      font-size: 15px;
+      color: #22c55e;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 13px;
+      opacity: 0.5;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container">
+    <header>
+      <h1>KAZANC.COM</h1>
+      <div class="menu">☰</div>
+    </header>
 
-<h1>📘 Məktəb Gündəliyim</h1>
+    <section class="hero">
+      <h2>KAZANCINIZI MAKSİMUM EDİN!</h2>
+      <p>VARİANT 3: Mixed Sistem (ƏN AĞILLI)</p>
+    </section>
 
-<div class="box">
-    <h3>📸 Dərs cədvəlini yüklə</h3>
-    <input type="file" accept="image/*" onchange="loadImage(event)">
-    <img id="scheduleImage">
-</div>
+    <section class="cards">
+      <div class="card cpm">
+        <span>1</span>
+        <h3>CPM REKLAM</h3>
+        <p>Hamıdan Pul</p>
+      </div>
 
-<div class="box">
-    <h3>✍️ Yeni tapşırıq əlavə et</h3>
-    <input id="subject" placeholder="Fənn (məs: Riyaziyyat)">
-    <textarea id="task" placeholder="Tapşırıq"></textarea>
-    <button onclick="addTask()">Əlavə et</button>
-</div>
+      <div class="card cpc">
+        <span>2</span>
+        <h3>CPC SPONSOR LİNK</h3>
+        <p>Klikdən Pul</p>
+      </div>
 
-<div class="box">
-    <h3>📚 Tapşırıqlarım</h3>
-    <div id="taskList"></div>
-</div>
+      <div class="card affiliate">
+        <span>3</span>
+        <h3>AFFILIATE</h3>
+        <p>Alış Olarsa Bonus</p>
+      </div>
+    </section>
 
-<script>
-    // Şəkil yükləmə
-    function loadImage(event) {
-        const img = document.getElementById("scheduleImage");
-        img.src = URL.createObjectURL(event.target.files[0]);
-        localStorage.setItem("scheduleImage", img.src);
-    }
+    <div class="checks">
+      <p>✔️ Alış olmasa da pul gəlir</p>
+      <p>✔️ Alış olsa daha çox gəlir</p>
+    </div>
 
-    // Şəkli saxla
-    if (localStorage.getItem("scheduleImage")) {
-        document.getElementById("scheduleImage").src =
-            localStorage.getItem("scheduleImage");
-    }
-
-    // Tapşırıq əlavə et
-    function addTask() {
-        const subject = document.getElementById("subject").value;
-        const task = document.getElementById("task").value;
-
-        if (!subject || !task) {
-            alert("Fənn və tapşırıq yaz!");
-            return;
-        }
-
-        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-        tasks.push({ subject, task });
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-
-        document.getElementById("subject").value = "";
-        document.getElementById("task").value = "";
-
-        showTasks();
-    }
-
-    // Tapşırıqları göstər
-    function showTasks() {
-        const taskList = document.getElementById("taskList");
-        taskList.innerHTML = "";
-
-        const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-        tasks.forEach(t => {
-            const div = document.createElement("div");
-            div.className = "task";
-            div.innerHTML = `<b>${t.subject}</b><br>${t.task}`;
-            taskList.appendChild(div);
-        });
-    }
-
-    showTasks();
-</script>
-
+    <footer>
+      Bu modeli böyük influencer-lər istifadə edir.
+    </footer>
+  </div>
 </body>
 </html>
+
 

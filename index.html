@@ -3,246 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oyun Dünyası - Qazan və Oyna</title>
+    <title>Black Games Portal</title>
     <style>
-        :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #3b82f6;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-        }
-
-        #main-menu {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #050505; color: white; font-family: 'Arial', sans-serif; overflow: hidden; }
+        
+        /* Menyu Dizaynı */
+        #menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            padding: 50px 20px;
+            padding: 40px;
+            height: 100vh;
+            align-content: center;
+        }
+
+        .card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 20px;
             text-align: center;
-        }
-
-        h1 { width: 100%; margin-bottom: 40px; font-size: 2.5rem; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-
-        .game-card {
-            background: var(--card-bg);
-            width: 280px;
-            height: 400px;
-            border-radius: 20px;
+            transition: 0.3s;
             cursor: pointer;
-            transition: transform 0.3s, border 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid transparent;
             position: relative;
-            overflow: hidden;
         }
 
-        .game-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--accent);
-        }
-
-        .game-card img { width: 80%; border-radius: 10px; margin-bottom: 20px; }
-
-        /* Oyun Sahələri */
-        .game-container {
+        .card:hover { border-color: #555; transform: scale(1.05); background: #161616; }
+        .card img { width: 100%; border-radius: 10px; margin-bottom: 15px; filter: grayscale(100%); }
+        
+        /* Oyun Pəncərələri */
+        .game-screen {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark);
+            background: #000;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            z-index: 10;
         }
 
         .back-btn {
             position: absolute;
             top: 20px; left: 20px;
             padding: 10px 20px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            background: #cc0000;
+            border: none; color: white; border-radius: 5px; cursor: pointer;
         }
 
-        /* Black Blast Stili */
-        #black-blast-board {
-            display: grid;
-            grid-template-columns: repeat(5, 50px);
-            gap: 5px;
-            background: #000;
-            padding: 10px;
-            border: 2px solid #333;
-        }
-        .cell { width: 50px; height: 50px; background: #111; border: 1px solid #222; cursor: pointer; }
-        .cell.active { background: #444; }
+        /* 1. BLACK BLAST */
+        #grid { display: grid; grid-template-columns: repeat(8, 40px); gap: 2px; background: #222; padding: 5px; }
+        .block { width: 40px; height: 40px; background: #000; border: 1px solid #111; cursor: pointer; }
+        .block.active { background: #444; box-shadow: inset 0 0 10px #000; }
 
-        /* Çarx Stili */
-        #wheel-container { position: relative; }
-        #wheel { width: 300px; height: 300px; border-radius: 50%; border: 5px solid white; transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1); }
-        .spin-btn { margin-top: 20px; padding: 15px 40px; font-size: 1.2rem; background: #10b981; border: none; border-radius: 50px; color: white; cursor: pointer; }
-
-        /* Popup */
-        #money-popup {
+        /* 2. ÇARX */
+        #wheel-canvas { border: 5px solid #333; border-radius: 50%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
+        .spin-trigger { margin-top: 20px; padding: 15px 30px; background: #fff; color: #000; font-weight: bold; border-radius: 30px; cursor: pointer; }
+        
+        /* POPUP */
+        #popup {
             display: none;
             position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 20px;
-            border: 3px solid #f59e0b;
-            text-align: center;
-            z-index: 100;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #111; border: 2px solid gold; padding: 30px; border-radius: 15px; text-align: center; z-index: 100;
         }
-        .money-link { display: block; margin: 20px 0; padding: 15px; background: linear-gradient(90deg, #8b5cf6, #d946ef); color: white; text-decoration: none; border-radius: 10px; font-weight: bold; }
+        .money-btn { display: block; margin-top: 20px; padding: 10px; background: green; color: white; text-decoration: none; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="main-menu">
-        <h1>OYUN DÜNYASI</h1>
-        
-        <div class="game-card" onclick="openGame('black-blast')">
-            <div style="font-size: 50px;">⬛</div>
-            <h2>BLACK BLAST</h2>
-            <p>Hər şey qara!</p>
+    <div id="menu">
+        <div class="card" onclick="startBlackBlast()">
+            <div style="font-size: 80px;">⬛</div>
+            <h3>BLACK BLAST</h3>
+            <p>Bütün rənglər qara.</p>
         </div>
-
-        <div class="game-card" onclick="openGame('wheel-game')">
-            <div style="font-size: 50px;">🎡</div>
-            <h2>ŞANS ÇARXI</h2>
-            <p>Seçimini et və fırlat</p>
+        <div class="card" onclick="openWheel()">
+            <div style="font-size: 80px;">🎡</div>
+            <h3>ŞANS ÇARXI</h3>
+            <p>Fırlat və Qazan</p>
         </div>
-
-        <div class="game-card" onclick="openGame('space-dodge')">
-            <div style="font-size: 50px;">🚀</div>
-            <h2>SÜRPRIZ OYUN</h2>
-            <p>Ulduzlardan qaç!</p>
+        <div class="card" onclick="startSpaceDash()">
+            <div style="font-size: 80px;">🌠</div>
+            <h3>SPACE DASH</h3>
+            <p>Sürpriz Oyun</p>
         </div>
     </div>
 
-    <div id="black-blast" class="game-container">
-        <button class="back-btn" onclick="closeGame()">Geri</button>
-        <h2>BLACK BLAST</h2>
-        <div id="black-blast-board"></div>
-        <p>Blokları dolduraraq təmizlə!</p>
+    <div id="game1" class="game-screen">
+        <button class="back-btn" onclick="exit()">Geri</button>
+        <h2 style="margin-bottom: 20px;">BLACK BLAST</h2>
+        <div id="grid"></div>
     </div>
 
-    <div id="wheel-game" class="game-container">
-        <button class="back-btn" onclick="closeGame()">Geri</button>
-        <div id="wheel-container">
-            <canvas id="wheel" width="300" height="300"></canvas>
-        </div>
-        <button class="spin-btn" onclick="spinWheel()">Fırlat!</button>
-        <p id="wheel-msg" style="margin-top: 20px;"></p>
-        
-        <button onclick="showMoneyPopup()" style="background:none; border:none; color:#3b82f6; text-decoration:underline; cursor:pointer;">
-            +1 yazı haqqı (Kliklə)
-        </button>
+    <div id="game2" class="game-screen">
+        <button class="back-btn" onclick="exit()">Geri</button>
+        <canvas id="wheel-canvas" width="350" height="350"></canvas>
+        <div class="spin-trigger" onclick="spin()">FIRLAT</div>
+        <p onclick="showPopup()" style="margin-top:20px; color: cyan; cursor:pointer;">+1 Yazı Haqqı Üçün Tıkla</p>
     </div>
 
-    <div id="space-dodge" class="game-container">
-        <button class="back-btn" onclick="closeGame()">Geri</button>
-        <h2>SPACE DODGE</h2>
-        <canvas id="spaceCanvas" width="300" height="400" style="background: black; border: 2px solid white;"></canvas>
-        <p>Sağa-sola klikləyərək qaç!</p>
+    <div id="game3" class="game-screen">
+        <button class="back-btn" onclick="exit()">Geri</button>
+        <canvas id="space-canvas"></canvas>
     </div>
 
-    <div id="money-popup">
-        <h3>+10$ QAZANMA ŞANSI!</h3>
-        <p>Daha çox seçim üçün aşağıdakı linkə keçid edin:</p>
-        <a href="SENIN_LINKIN_BURAYA" target="_blank" class="money-link">MƏNƏ +10$ QAZANDIR</a>
-        <button onclick="this.parentElement.style.display='none'">Bağla</button>
+    <div id="popup">
+        <h3>LİNKƏ KEÇİD EDİN</h3>
+        <p>+1 Yazı haqqı və mənə dəstək üçün:</p>
+        <a href="https://SENIN_LINKIN_BURA.com" target="_blank" class="money-btn" onclick="hidePopup()">TIKLA +10$ QAZANDIR</a>
+        <button onclick="hidePopup()" style="margin-top:10px; background:none; border:none; color:gray;">Bağla</button>
     </div>
 
     <script>
-        function openGame(gameId) {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById(gameId).style.display = 'flex';
-            if(gameId === 'space-dodge') startSpaceGame();
+        function exit() { location.reload(); }
+        function showPopup() { document.getElementById('popup').style.display = 'block'; }
+        function hidePopup() { document.getElementById('popup').style.display = 'none'; }
+
+        // --- 1. BLACK BLAST MƏNTİQİ ---
+        function startBlackBlast() {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('game1').style.display = 'flex';
+            const grid = document.getElementById('grid');
+            for(let i=0; i<64; i++) {
+                const b = document.createElement('div');
+                b.className = 'block';
+                b.onclick = () => b.classList.toggle('active');
+                grid.appendChild(b);
+            }
         }
 
-        function closeGame() {
-            location.reload(); // Sadəlik üçün səhifəni yeniləyirik
-        }
-
-        function showMoneyPopup() {
-            document.getElementById('money-popup').style.display = 'block';
-        }
-
-        // --- BLACK BLAST MƏNTİQİ ---
-        const board = document.getElementById('black-blast-board');
-        for(let i=0; i<25; i++) {
-            let cell = document.createElement('div');
-            cell.className = 'cell';
-            cell.onclick = () => cell.classList.toggle('active');
-            board.appendChild(cell);
-        }
-
-        // --- ÇARX MƏNTİQİ ---
-        const canvas = document.getElementById('wheel');
+        // --- 2. ÇARX MƏNTİQİ ---
+        const canvas = document.getElementById('wheel-canvas');
         const ctx = canvas.getContext('2d');
-        const options = ["Qazan", "İtir", "Yenidən", "Hədiyyə", "Boş", "Jackpot"];
+        const sectors = ["1$", "0$", "5$", "0$", "10$", "0$"];
         
         function drawWheel() {
-            const arc = Math.PI / 3;
+            const rad = canvas.width / 2;
+            const arc = (Math.PI * 2) / 6;
             for(let i=0; i<6; i++) {
-                ctx.fillStyle = i % 2 === 0 ? '#111' : '#222';
                 ctx.beginPath();
-                ctx.moveTo(150, 150);
-                ctx.arc(150, 150, 145, i*arc, (i+1)*arc);
+                ctx.fillStyle = i % 2 === 0 ? "#000" : "#111";
+                ctx.moveTo(rad, rad);
+                ctx.arc(rad, rad, rad-10, i*arc, (i+1)*arc);
                 ctx.fill();
+                ctx.strokeStyle = "#333";
                 ctx.stroke();
                 ctx.fillStyle = "white";
-                ctx.fillText(options[i], 160, 100);
+                ctx.save();
+                ctx.translate(rad, rad);
+                ctx.rotate(i*arc + arc/2);
+                ctx.fillText(sectors[i], rad/2, 5);
+                ctx.restore();
             }
         }
         drawWheel();
 
-        function spinWheel() {
-            const wheel = document.getElementById('wheel');
-            const deg = Math.floor(5000 + Math.random() * 5000);
-            wheel.style.transform = rotate(${deg}deg);
+        function openWheel() {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('game2').style.display = 'flex';
         }
 
-        // --- SÜRPRIZ OYUN (SPACE DODGE) ---
-        function startSpaceGame() {
-            const c = document.getElementById('spaceCanvas');
+        let rotation = 0;
+        function spin() {
+            rotation += Math.floor(2000 + Math.random() * 2000);
+            canvas.style.transform = `rotate(${rotation}deg)`;
+        }
+
+        // --- 3. SPACE DASH (SÜRPRIZ) ---
+        function startSpaceDash() {
+            document.getElementById('menu').style.display = 'none';
+            const screen = document.getElementById('game3');
+            screen.style.display = 'flex';
+            const c = document.getElementById('space-canvas');
+            c.width = window.innerWidth;
+            c.height = window.innerHeight;
             const cx = c.getContext('2d');
-            let player = { x: 135, y: 350 };
-            let enemies = [];
             
-            function update() {
-                cx.clearRect(0,0,300,400);
-                cx.fillStyle = "cyan";
-                cx.fillRect(player.x, player.y, 30, 30);
+            let px = c.width/2, py = c.height - 80;
+            let stars = [];
+
+            function loop() {
+                cx.fillStyle = "black";
+                cx.fillRect(0,0,c.width, c.height);
+                cx.fillStyle = "white";
+                cx.fillRect(px, py, 30, 30);
                 
-                if(Math.random() < 0.05) enemies.push({x: Math.random()*270, y: 0});
+                if(Math.random() < 0.1) stars.push({x: Math.random()*c.width, y: -20});
                 
-                enemies.forEach((e, i) => {
-                    e.y += 3;
-                    cx.fillStyle = "white";
-                    cx.fillRect(e.x, e.y, 20, 20);
-                    if(e.y > 400) enemies.splice(i, 1);
+                stars.forEach((s, i) => {
+                    s.y += 5;
+                    cx.beginPath();
+                    cx.arc(s.x, s.y, 3, 0, Math.PI*2);
+                    cx.fill();
+                    if(s.y > c.height) stars.splice(i, 1);
                 });
-                requestAnimationFrame(update);
+                requestAnimationFrame(loop);
             }
-            update();
-            window.onclick = (e) => { if(e.clientX < window.innerWidth/2) player.x -= 20; else player.x += 20; };
+            window.onmousemove = (e) => px = e.clientX - 15;
+            loop();
         }
     </script>
 </body>

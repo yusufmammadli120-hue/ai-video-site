@@ -1,209 +1,179 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Black Games Portal</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #050505; color: white; font-family: 'Arial', sans-serif; overflow: hidden; }
-        
-        /* Menyu Dizaynı */
-        #menu {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 40px;
-            height: 100vh;
-            align-content: center;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Məqsəd İzləyici</title>
 
-        .card {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            transition: 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .card:hover { border-color: #555; transform: scale(1.05); background: #161616; }
-        .card img { width: 100%; border-radius: 10px; margin-bottom: 15px; filter: grayscale(100%); }
-        
-        /* Oyun Pəncərələri */
-        .game-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: 20px; left: 20px;
-            padding: 10px 20px;
-            background: #cc0000;
-            border: none; color: white; border-radius: 5px; cursor: pointer;
-        }
-
-        /* 1. BLACK BLAST */
-        #grid { display: grid; grid-template-columns: repeat(8, 40px); gap: 2px; background: #222; padding: 5px; }
-        .block { width: 40px; height: 40px; background: #000; border: 1px solid #111; cursor: pointer; }
-        .block.active { background: #444; box-shadow: inset 0 0 10px #000; }
-
-        /* 2. ÇARX */
-        #wheel-canvas { border: 5px solid #333; border-radius: 50%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
-        .spin-trigger { margin-top: 20px; padding: 15px 30px; background: #fff; color: #000; font-weight: bold; border-radius: 30px; cursor: pointer; }
-        
-        /* POPUP */
-        #popup {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #111; border: 2px solid gold; padding: 30px; border-radius: 15px; text-align: center; z-index: 100;
-        }
-        .money-btn { display: block; margin-top: 20px; padding: 10px; background: green; color: white; text-decoration: none; border-radius: 5px; }
-    </style>
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f4f6f8;
+}
+header{
+  background:#1fbf75;
+  color:white;
+  padding:15px;
+  text-align:center;
+}
+button{
+  background:#1fbf75;
+  border:none;
+  padding:10px 15px;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+.container{
+  padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:15px;
+}
+.card{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 3px 6px rgba(0,0,0,.1);
+}
+.progress{
+  background:#ddd;
+  border-radius:10px;
+  overflow:hidden;
+  height:10px;
+}
+.bar{
+  height:100%;
+  background:#1fbf75;
+}
+.actions{
+  display:flex;
+  justify-content:space-between;
+  margin-top:10px;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+.modalContent{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+}
+input,select{
+  width:100%;
+  padding:8px;
+  margin:5px 0;
+}
+@media(max-width:768px){
+  .container{grid-template-columns:1fr;}
+}
+</style>
 </head>
+
 <body>
 
-    <div id="menu">
-        <div class="card" onclick="startBlackBlast()">
-            <div style="font-size: 80px;">⬛</div>
-            <h3>BLACK BLAST</h3>
-            <p>Bütün rənglər qara.</p>
-        </div>
-        <div class="card" onclick="openWheel()">
-            <div style="font-size: 80px;">🎡</div>
-            <h3>ŞANS ÇARXI</h3>
-            <p>Fırlat və Qazan</p>
-        </div>
-        <div class="card" onclick="startSpaceDash()">
-            <div style="font-size: 80px;">🌠</div>
-            <h3>SPACE DASH</h3>
-            <p>Sürpriz Oyun</p>
-        </div>
-    </div>
+<header>
+<h2>Məqsəd İzləyici</h2>
+<button onclick="openAdd()">+ Əlavə Et</button>
+</header>
 
-    <div id="game1" class="game-screen">
-        <button class="back-btn" onclick="exit()">Geri</button>
-        <h2 style="margin-bottom: 20px;">BLACK BLAST</h2>
-        <div id="grid"></div>
-    </div>
+<div class="container" id="list"></div>
 
-    <div id="game2" class="game-screen">
-        <button class="back-btn" onclick="exit()">Geri</button>
-        <canvas id="wheel-canvas" width="350" height="350"></canvas>
-        <div class="spin-trigger" onclick="spin()">FIRLAT</div>
-        <p onclick="showPopup()" style="margin-top:20px; color: cyan; cursor:pointer;">+1 Yazı Haqqı Üçün Tıkla</p>
-    </div>
+<div class="modal" id="modal">
+<div class="modalContent">
+<h3 id="title">Hədəf</h3>
+<input id="name" placeholder="Hədəf adı">
+<input id="link" placeholder="Link və ya 0000">
+<select id="type">
+<option value="Pul">Pul</option>
+<option value="Gün">Gün</option>
+<option value="Km">Km</option>
+</select>
+<input id="max" type="number" placeholder="Maksimum">
+<input id="now" type="number" placeholder="Hazırda olan">
+<button onclick="save()">Yadda Saxla</button>
+</div>
+</div>
 
-    <div id="game3" class="game-screen">
-        <button class="back-btn" onclick="exit()">Geri</button>
-        <canvas id="space-canvas"></canvas>
-    </div>
+<script>
+let data=JSON.parse(localStorage.getItem("goals")||"[]");
+let edit=-1;
 
-    <div id="popup">
-        <h3>LİNKƏ KEÇİD EDİN</h3>
-        <p>+1 Yazı haqqı və mənə dəstək üçün:</p>
-        <a href="https://SENIN_LINKIN_BURA.com" target="_blank" class="money-btn" onclick="hidePopup()">TIKLA +10$ QAZANDIR</a>
-        <button onclick="hidePopup()" style="margin-top:10px; background:none; border:none; color:gray;">Bağla</button>
-    </div>
+function render(){
+  list.innerHTML="";
+  data.forEach((g,i)=>{
+    let p=Math.min(g.now/g.max*100,100);
+    list.innerHTML+=`
+    <div class="card">
+      <h4>${g.name}</h4>
+      <small>${g.type}: ${g.now}/${g.max}</small>
+      <div class="progress"><div class="bar" style="width:${p}%"></div></div>
+      <div class="actions">
+        <button onclick="daily(${i})">+ Günlük</button>
+        <button onclick="editGoal(${i})">✏️</button>
+        <button onclick="del(${i})">🗑</button>
+      </div>
+    </div>`;
+  });
+  localStorage.setItem("goals",JSON.stringify(data));
+}
 
-    <script>
-        function exit() { location.reload(); }
-        function showPopup() { document.getElementById('popup').style.display = 'block'; }
-        function hidePopup() { document.getElementById('popup').style.display = 'none'; }
+function openAdd(){
+  modal.style.display="flex";
+  title.innerText="Hədəf Əlavə Et";
+  name.value=link.value=max.value=now.value="";
+  edit=-1;
+}
 
-        // --- 1. BLACK BLAST MƏNTİQİ ---
-        function startBlackBlast() {
-            document.getElementById('menu').style.display = 'none';
-            document.getElementById('game1').style.display = 'flex';
-            const grid = document.getElementById('grid');
-            for(let i=0; i<64; i++) {
-                const b = document.createElement('div');
-                b.className = 'block';
-                b.onclick = () => b.classList.toggle('active');
-                grid.appendChild(b);
-            }
-        }
+function save(){
+  let g={
+    name:name.value,
+    link:link.value,
+    type:type.value,
+    max:+max.value,
+    now:+now.value
+  };
+  if(edit==-1) data.push(g);
+  else data[edit]=g;
+  modal.style.display="none";
+  render();
+}
 
-        // --- 2. ÇARX MƏNTİQİ ---
-        const canvas = document.getElementById('wheel-canvas');
-        const ctx = canvas.getContext('2d');
-        const sectors = ["1$", "0$", "5$", "0$", "10$", "0$"];
-        
-        function drawWheel() {
-            const rad = canvas.width / 2;
-            const arc = (Math.PI * 2) / 6;
-            for(let i=0; i<6; i++) {
-                ctx.beginPath();
-                ctx.fillStyle = i % 2 === 0 ? "#000" : "#111";
-                ctx.moveTo(rad, rad);
-                ctx.arc(rad, rad, rad-10, i*arc, (i+1)*arc);
-                ctx.fill();
-                ctx.strokeStyle = "#333";
-                ctx.stroke();
-                ctx.fillStyle = "white";
-                ctx.save();
-                ctx.translate(rad, rad);
-                ctx.rotate(i*arc + arc/2);
-                ctx.fillText(sectors[i], rad/2, 5);
-                ctx.restore();
-            }
-        }
-        drawWheel();
+function editGoal(i){
+  let g=data[i];
+  name.value=g.name;
+  link.value=g.link;
+  type.value=g.type;
+  max.value=g.max;
+  now.value=g.now;
+  edit=i;
+  modal.style.display="flex";
+}
 
-        function openWheel() {
-            document.getElementById('menu').style.display = 'none';
-            document.getElementById('game2').style.display = 'flex';
-        }
+function del(i){
+  if(confirm("Silinsin?")){
+    data.splice(i,1);
+    render();
+  }
+}
 
-        let rotation = 0;
-        function spin() {
-            rotation += Math.floor(2000 + Math.random() * 2000);
-            canvas.style.transform = `rotate(${rotation}deg)`;
-        }
+function daily(i){
+  let v=prompt(`Bu gün neçə ${data[i].type} əlavə etdin?`);
+  if(v){
+    data[i].now+=+v;
+    render();
+  }
+}
 
-        // --- 3. SPACE DASH (SÜRPRIZ) ---
-        function startSpaceDash() {
-            document.getElementById('menu').style.display = 'none';
-            const screen = document.getElementById('game3');
-            screen.style.display = 'flex';
-            const c = document.getElementById('space-canvas');
-            c.width = window.innerWidth;
-            c.height = window.innerHeight;
-            const cx = c.getContext('2d');
-            
-            let px = c.width/2, py = c.height - 80;
-            let stars = [];
+render();
+</script>
 
-            function loop() {
-                cx.fillStyle = "black";
-                cx.fillRect(0,0,c.width, c.height);
-                cx.fillStyle = "white";
-                cx.fillRect(px, py, 30, 30);
-                
-                if(Math.random() < 0.1) stars.push({x: Math.random()*c.width, y: -20});
-                
-                stars.forEach((s, i) => {
-                    s.y += 5;
-                    cx.beginPath();
-                    cx.arc(s.x, s.y, 3, 0, Math.PI*2);
-                    cx.fill();
-                    if(s.y > c.height) stars.splice(i, 1);
-                });
-                requestAnimationFrame(loop);
-            }
-            window.onmousemove = (e) => px = e.clientX - 15;
-            loop();
-        }
-    </script>
 </body>
 </html>

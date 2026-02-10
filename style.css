@@ -1,0 +1,58 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  touch-action: none;
+}
+
+body {
+  background: #0f0f0f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+#game {
+  position: relative;
+  width: 360px;
+  height: 640px;
+  background: linear-gradient(#111, #222);
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+#player {
+  position: absolute;
+  bottom: 20px;
+  left: 160px;
+  width: 40px;
+  height: 40px;
+  background: #00ffcc;
+  border-radius: 8px;
+}
+
+.enemy, .coin {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: -40px;
+  border-radius: 50%;
+}
+
+.enemy {
+  background: red;
+}
+
+.coin {
+  background: gold;
+}
+
+#score {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: white;
+  font-size: 18px;
+}

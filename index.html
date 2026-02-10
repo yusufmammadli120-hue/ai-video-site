@@ -1,17 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Dodge & Collect</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Tokyo Drift Mobile</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="game">
-    <div id="player"></div>
-    <div id="score">Score: 0</div>
-  </div>
 
-  <script src="game.js"></script>
+<!-- START SCREEN -->
+<div id="startScreen">
+  <h1>TOKYO DRIFT</h1>
+  <button id="startBtn">START</button>
+</div>
+
+<!-- GAME UI -->
+<canvas id="game"></canvas>
+
+<!-- CONTROLS -->
+<div id="controls">
+  <div class="left">
+    <button id="leftBtn">◀</button>
+    <button id="rightBtn">▶</button>
+  </div>
+  <div class="right">
+    <button id="brakeBtn">BRAKE</button>
+    <button id="gasBtn">GAS</button>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <span id="speed">0 km/h</span>
+  <span id="coins">Coins: 1500</span>
+</div>
+
+<!-- CAMERA -->
+<button id="cameraBtn">📷</button>
+
+<script src="game.js"></script>
 </body>
-</html>
+</html>ğ

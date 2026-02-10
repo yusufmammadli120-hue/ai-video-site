@@ -1,69 +1,72 @@
-const game = document.getElementById("game");
-const player = document.getElementById("player");
-const scoreEl = document.getElementById("score");
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-let score = 0;
-let playerX = 160;
-let speed = 3;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-// Player move (touch + mouse)
-game.addEventListener("mousemove", e => {
-  const rect = game.getBoundingClientRect();
-  playerX = e.clientX - rect.left - 20;
-});
+let gameStarted = false;
+let speed = 0;
+let coins = 1500;
+let x = canvas.width / 2;
+let cameraMode = 0;
 
-game.addEventListener("touchmove", e => {
-  const rect = game.getBoundingClientRect();
-  playerX = e.touches[0].clientX - rect.left - 20;
-});
+document.getElementById("startBtn").onclick = () => {
+  document.getElementById("startScreen").style.display = "none";
+  gameStarted = true;
+  loop();
+};
 
-// Spawn objects
-function spawn(type) {
-  const el = document.createElement("div");
-  el.classList.add(type);
-  el.style.left = Math.random() * 330 + "px";
-  game.appendChild(el);
+document.getElementById("gasBtn").ontouchstart = () => speed += 2;
+document.getElementById("brakeBtn").ontouchstart = () => speed -= 3;
 
-  let y = -30;
+document.getElementById("leftBtn").ontouchstart = () => x -= 20;
+document.getElementById("rightBtn").ontouchstart = () => x += 20;
 
-  const fall = setInterval(() => {
-    y += speed;
-    el.style.top = y + "px";
+document.getElementById("cameraBtn").onclick = () => {
+  cameraMode = (cameraMode + 1) % 3;
+};
 
-    const px = playerX;
-    const py = 580;
-    const ex = el.offsetLeft;
-    const ey = y;
+function drawRoad() {
+  ctx.fillStyle = "#111";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Collision
-    if (
-      ex < px + 40 &&
-      ex + 30 > px &&
-      ey < py + 40 &&
-      ey + 30 > py
-    ) {
-      if (type === "enemy") {
-        alert("Game Over! Score: " + score);
-        location.reload();
-      } else {
-        score++;
-        scoreEl.innerText = "Score: " + score;
-        el.remove();
-        clearInterval(fall);
-      }
-    }
-
-    if (y > 700) {
-      el.remove();
-      clearInterval(fall);
-    }
-  }, 20);
+  ctx.strokeStyle = "#555";
+  ctx.setLineDash([40, 40]);
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(canvas.width / 2, 0);
+  ctx.lineTo(canvas.width / 2, canvas.height);
+  ctx.stroke();
 }
 
-// Game loop
-setInterval(() => {
-  player.style.left = playerX + "px";
-}, 10);
+function drawCar() {
+  ctx.fillStyle = "red";
+  ctx.fillRect(x - 25, canvas.height - 120, 50, 100);
+}
 
-setInterval(() => spawn("enemy"), 1200);
-setInterval(() => spawn("coin"), 900);
+function rain() {
+  ctx.fillStyle = "rgba(255,255,255,0.3)";
+  for (let i = 0; i < 100; i++) {
+    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 2, 10);
+  }
+}
+
+function trafficLogic() {
+  if (speed > 120) {
+    coins -= 100;
+  }
+}
+
+function loop() {
+  if (!gameStarted) return;
+
+  drawRoad();
+  rain();
+  drawCar();
+  trafficLogic();
+
+  document.getElementById("speed").innerText = Math.max(speed,0) + " km/h";
+  document.getElementById("coins").innerText = "Coins: " + coins;
+
+  requestAnimationFrame(loop);
+}

@@ -2,57 +2,82 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  touch-action: none;
-}
-
-body {
-  background: #0f0f0f;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   font-family: Arial, sans-serif;
 }
 
-#game {
-  position: relative;
-  width: 360px;
-  height: 640px;
-  background: linear-gradient(#111, #222);
+body {
   overflow: hidden;
-  border-radius: 12px;
+  background: black;
 }
 
-#player {
-  position: absolute;
-  bottom: 20px;
-  left: 160px;
-  width: 40px;
-  height: 40px;
-  background: #00ffcc;
-  border-radius: 8px;
+canvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
 }
 
-.enemy, .coin {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  top: -40px;
-  border-radius: 50%;
+#startScreen {
+  position: fixed;
+  inset: 0;
+  background: url("https://i.imgur.com/1Q9Z1Zm.jpg") center/cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
 }
 
-.enemy {
+#startScreen h1 {
+  color: white;
+  font-size: 48px;
+  text-shadow: 0 0 20px red;
+}
+
+#startBtn {
+  margin-top: 20px;
+  padding: 15px 40px;
+  font-size: 20px;
   background: red;
+  border: none;
+  color: white;
+  border-radius: 10px;
 }
 
-.coin {
-  background: gold;
+#controls {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
 }
 
-#score {
-  position: absolute;
+.left button, .right button {
+  padding: 20px;
+  margin: 5px;
+  font-size: 18px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+#hud {
+  position: fixed;
   top: 10px;
   left: 10px;
   color: white;
   font-size: 18px;
+}
+
+#cameraBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 22px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  color: white;
 }
